@@ -420,7 +420,7 @@
 
     // ─── PANDUAN POPUP (Operator only, once per session) ───────────────────
     (function() {
-        var user = JSON.parse(sessionStorage.getItem("ubmg_user") || localStorage.getItem("ubmg_user") || "{}");
+        var user = getSession(); // getSession() dari auth.js pakai key "ubmg_user_session"
         if (!user || user.role !== "Operator") return;
         if (sessionStorage.getItem("panduan_shown")) return;
         sessionStorage.setItem("panduan_shown", "1");
