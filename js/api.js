@@ -4,7 +4,7 @@
 // ===================================================================================
 
 // Ganti URL ini dengan URL Web App Google Apps Script Anda setelah deploy
-var API_URL = "https://script.google.com/macros/s/AKfycbxFX4qeIYS9mckMOxEc2_NfbW-5civ4Ov0wU-r8maeDzxW5BjJLm9BUdhbFY5kk7LTz/exec";
+var API_URL = "https://script.google.com/macros/s/AKfycbxW8ouZk4LtAvh7eZRzWe-LUCeOp_3dhlatDY7gPRDAsLpMHiJV3-koEorHyfR4whn2/exec";
 
 /**
  * Fungsi utama untuk mengirim request POST ke Apps Script.
