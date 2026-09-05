@@ -285,7 +285,7 @@ function addSuratMasuk(params) {
 
     sheet.appendRow(newRow);
 
-    return { success: true, message: "Surat masuk berhasil ditambahkan.", id: id };
+    return { success: true, message: "Sukses. Base64: " + (!!params.fileBase64) + ", Name: " + params.fileName + ", URL: " + fileUploadUrl, id: id };
   } catch (error) {
     return { success: false, message: "Gagal menambahkan surat masuk: " + error.message };
   }
@@ -328,7 +328,7 @@ function updateSuratMasuk(params) {
         if (fileUploadUrl !== undefined) {
           sheet.getRange(rowNum, colFileUpload).setValue(fileUploadUrl);
         }
-        return { success: true, message: "Surat masuk berhasil diperbarui." };
+        return { success: true, message: "Sukses. Base64: " + (!!params.fileBase64) + ", Name: " + params.fileName + ", URL: " + fileUploadUrl };
       }
     }
 
@@ -426,7 +426,7 @@ function addSuratKeluar(params) {
 
     sheet.appendRow(newRow);
 
-    return { success: true, message: "Surat keluar berhasil ditambahkan.", id: id };
+    return { success: true, message: "Sukses. Base64: " + (!!params.fileBase64) + ", Name: " + params.fileName + ", URL: " + fileUploadUrl, id: id };
   } catch (error) {
     return { success: false, message: "Gagal menambahkan surat keluar: " + error.message };
   }
@@ -468,7 +468,7 @@ function updateSuratKeluar(params) {
         if (fileUploadUrl !== undefined) {
           sheet.getRange(rowNum, colFileUpload).setValue(fileUploadUrl);
         }
-        return { success: true, message: "Surat keluar berhasil diperbarui." };
+        return { success: true, message: "Sukses. Base64: " + (!!params.fileBase64) + ", Name: " + params.fileName + ", URL: " + fileUploadUrl };
       }
     }
 
