@@ -215,8 +215,12 @@
     populateUserInfo();
     initSidebar();
 
+    // Simpan data laporan terakhir untuk keperluan cetak
+    var _laporanData = null;
+    var _laporanFilter = {};
+
     document.getElementById("btn-generate").addEventListener("click", generateLaporan);
-    document.getElementById("btn-print").addEventListener("click", function() { window.print(); });
+    document.getElementById("btn-print").addEventListener("click", printLaporan);
 
     async function generateLaporan() {
         var jenis        = document.getElementById("filter-jenis").value;
@@ -233,6 +237,8 @@
         }
 
         var data = result.data;
+        _laporanData = data;
+        _laporanFilter = { jenis: jenis, tanggalAwal: tanggalAwal, tanggalAkhir: tanggalAkhir };
 
         document.getElementById("summary-masuk").textContent = data.totalMasuk  || 0;
         document.getElementById("summary-keluar").textContent = data.totalKeluar || 0;
@@ -264,7 +270,7 @@
                 '<td>' + formatTanggal(item["Tanggal Terima"]) + '</td>' +
                 '<td>' + (item["Pengirim"] || "-") + '</td>' +
                 '<td>' + (item["Perihal"] || "-") + '</td>' +
-                '<td>' + getBadgeHtml(item["Status"]) + '</td>' +
+                '<td>' + (item["Status"] || "-") + '</td>' +
             '</tr>';
         });
         tbody.innerHTML = html;
@@ -284,10 +290,203 @@
                 '<td>' + formatTanggal(item["Tanggal Surat"]) + '</td>' +
                 '<td>' + (item["Tujuan"] || "-") + '</td>' +
                 '<td>' + (item["Perihal"] || "-") + '</td>' +
-                '<td>' + getBadgeHtml(item["Status"]) + '</td>' +
+                '<td>' + (item["Status"] || "-") + '</td>' +
             '</tr>';
         });
         tbody.innerHTML = html;
+    }
+
+    function printLaporan() {
+        if (!_laporanData) {
+            showToast("Silakan tampilkan laporan terlebih dahulu sebelum mencetak.", "warning");
+            return;
+        }
+
+        var jenis = _laporanFilter.jenis || "Semua";
+        var tglAwal = _laporanFilter.tanggalAwal || "-";
+        var tglAkhir = _laporanFilter.tanggalAkhir || "-";
+        var tanggalCetak = new Date().toLocaleDateString("id-ID", { day:"2-digit", month:"long", year:"numeric" });
+
+        var rowsMasuk = "";
+        if ((jenis === "Semua" || jenis === "Masuk") && _laporanData.suratMasuk && _laporanData.suratMasuk.length > 0) {
+            _laporanData.suratMasuk.forEach(function(item, idx) {
+                rowsMasuk += '<tr>' +
+                    '<td style="text-align:center">' + (idx+1) + '</td>' +
+                    '<td>' + (item["Nomor Surat"] || "-") + '</td>' +
+                    '<td>' + (item["Tanggal Terima"] || "-") + '</td>' +
+                    '<td>' + (item["Pengirim"] || "-") + '</td>' +
+                    '<td>' + (item["Perihal"] || "-") + '</td>' +
+                    '<td>' + (item["Kategori"] || "-") + '</td>' +
+                    '<td>' + (item["Ditujukan Kepada"] || "-") + '</td>' +
+                    '<td style="text-align:center">' + (item["Status"] || "-") + '</td>' +
+                '</tr>';
+            });
+        } else if (jenis === "Semua" || jenis === "Masuk") {
+            rowsMasuk = '<tr><td colspan="8" style="text-align:center;font-style:italic">Tidak ada data surat masuk</td></tr>';
+        }
+
+        var rowsKeluar = "";
+        if ((jenis === "Semua" || jenis === "Keluar") && _laporanData.suratKeluar && _laporanData.suratKeluar.length > 0) {
+            _laporanData.suratKeluar.forEach(function(item, idx) {
+                rowsKeluar += '<tr>' +
+                    '<td style="text-align:center">' + (idx+1) + '</td>' +
+                    '<td>' + (item["Nomor Surat"] || "-") + '</td>' +
+                    '<td>' + (item["Tanggal Surat"] || "-") + '</td>' +
+                    '<td>' + (item["Tujuan"] || "-") + '</td>' +
+                    '<td>' + (item["Perihal"] || "-") + '</td>' +
+                    '<td>' + (item["Kategori"] || "-") + '</td>' +
+                    '<td>' + (item["Penandatangan"] || "-") + '</td>' +
+                    '<td style="text-align:center">' + (item["Status"] || "-") + '</td>' +
+                '</tr>';
+            });
+        } else if (jenis === "Semua" || jenis === "Keluar") {
+            rowsKeluar = '<tr><td colspan="8" style="text-align:center;font-style:italic">Tidak ada data surat keluar</td></tr>';
+        }
+
+        var sectionMasukHtml = (jenis === "Semua" || jenis === "Masuk") ? `
+        <h3 style="font-size:13pt;font-weight:bold;margin:24px 0 8px;border-bottom:1px solid #000;padding-bottom:6px;">DAFTAR SURAT MASUK</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align:center;width:5%">No</th>
+                    <th>Nomor Surat</th>
+                    <th>Tgl Terima</th>
+                    <th>Pengirim</th>
+                    <th>Perihal</th>
+                    <th>Kategori</th>
+                    <th>Ditujukan Kepada</th>
+                    <th style="text-align:center">Status</th>
+                </tr>
+            </thead>
+            <tbody>${rowsMasuk}</tbody>
+        </table>` : "";
+
+        var sectionKeluarHtml = (jenis === "Semua" || jenis === "Keluar") ? `
+        <h3 style="font-size:13pt;font-weight:bold;margin:32px 0 8px;border-bottom:1px solid #000;padding-bottom:6px;">DAFTAR SURAT KELUAR</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align:center;width:5%">No</th>
+                    <th>Nomor Surat</th>
+                    <th>Tgl Surat</th>
+                    <th>Tujuan</th>
+                    <th>Perihal</th>
+                    <th>Kategori</th>
+                    <th>Penandatangan</th>
+                    <th style="text-align:center">Status</th>
+                </tr>
+            </thead>
+            <tbody>${rowsKeluar}</tbody>
+        </table>` : "";
+
+        var printHtml = `<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Laporan Surat - UBMG</title>
+    <style>
+        @page { margin: 1.5cm 1.8cm; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; font-size: 11pt; color: #000; background: #fff; }
+
+        /* KOP SURAT */
+        .kop { display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+        .kop img { width: 75px; height: auto; margin-right: 18px; }
+        .kop-text { text-align: center; }
+        .kop-text .yayasan { font-size: 11pt; font-weight: normal; }
+        .kop-text .univ { font-size: 16pt; font-weight: bold; text-transform: uppercase; margin: 4px 0; }
+        .kop-text .alamat { font-size: 9pt; color: #333; line-height: 1.5; }
+
+        .kop-line-thick { border: none; border-top: 4px solid #000; border-bottom: 1px solid #000; height: 6px; margin: 10px 0; }
+
+        /* JUDUL */
+        .judul-laporan { text-align: center; margin: 18px 0 6px; }
+        .judul-laporan h2 { font-size: 14pt; font-weight: bold; text-transform: uppercase; text-decoration: underline; }
+        .judul-laporan p { font-size: 10pt; color: #444; margin-top: 4px; }
+
+        /* RINGKASAN */
+        .ringkasan { display: flex; gap: 14px; margin: 18px 0; }
+        .ring-card { flex: 1; border: 1px solid #000; padding: 10px 6px; text-align: center; }
+        .ring-card .label { font-size: 9pt; color: #555; }
+        .ring-card .value { font-size: 18pt; font-weight: bold; margin-top: 2px; }
+
+        /* TABEL */
+        table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+        th { background-color: #d9d9d9; font-weight: bold; border: 1px solid #000; padding: 7px 8px; text-align: left; }
+        td { border: 1px solid #000; padding: 6px 8px; vertical-align: top; }
+        tr:nth-child(even) { background-color: #f7f7f7; }
+
+        /* TANDA TANGAN */
+        .ttd { margin-top: 50px; text-align: right; }
+        .ttd p { margin: 0; font-size: 10pt; }
+        .ttd .nama { margin-top: 60px; font-weight: bold; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<!-- KOP SURAT -->
+<div class="kop">
+    <img src="https://ubmg.ac.id/storage/website/ubmgicon.png" alt="Logo UBMG" onerror="this.style.display='none'">
+    <div class="kop-text">
+        <div class="yayasan">YAYASAN BINA MANDIRI GORONTALO</div>
+        <div class="univ">UNIVERSITAS BINA MANDIRI GORONTALO</div>
+        <div class="alamat">
+            Jl. Prof. Dr. H. Aloei Saboe No. 173, Kel. Wongkaditi, Kec. Kota Utara, Kota Gorontalo 96138<br>
+            Telp/Fax: (0435) 831174 | Website: www.ubmg.ac.id | Email: info@ubmg.ac.id
+        </div>
+    </div>
+</div>
+<div class="kop-line-thick"></div>
+
+<!-- JUDUL -->
+<div class="judul-laporan">
+    <h2>Laporan Data Surat</h2>
+    <p>
+        Jenis: ${jenis === "Semua" ? "Semua Surat" : "Surat " + jenis} &nbsp;|&nbsp;
+        Periode: ${tglAwal !== "-" ? tglAwal : "Semua"} s/d ${tglAkhir !== "-" ? tglAkhir : "Semua"}
+    </p>
+</div>
+
+<!-- RINGKASAN -->
+<div class="ringkasan">
+    <div class="ring-card">
+        <div class="label">Total Surat Masuk</div>
+        <div class="value">${_laporanData.totalMasuk || 0}</div>
+    </div>
+    <div class="ring-card">
+        <div class="label">Total Surat Keluar</div>
+        <div class="value">${_laporanData.totalKeluar || 0}</div>
+    </div>
+    <div class="ring-card">
+        <div class="label">Total Keseluruhan</div>
+        <div class="value">${(_laporanData.totalMasuk || 0) + (_laporanData.totalKeluar || 0)}</div>
+    </div>
+</div>
+
+${sectionMasukHtml}
+${sectionKeluarHtml}
+
+<!-- TANDA TANGAN -->
+<div class="ttd">
+    <p>Gorontalo, ${tanggalCetak}</p>
+    <p>Penanggung Jawab,</p>
+    <p class="nama">(_______________________)</p>
+</div>
+
+</body>
+</html>`;
+
+        var printWin = window.open("", "_blank", "width=900,height=700");
+        if (!printWin) {
+            showToast("Popup diblokir. Aktifkan izin popup untuk mencetak.", "warning");
+            return;
+        }
+        printWin.document.write(printHtml);
+        printWin.document.close();
+        printWin.focus();
+        setTimeout(function() {
+            printWin.print();
+        }, 600);
     }
 </script>
 
