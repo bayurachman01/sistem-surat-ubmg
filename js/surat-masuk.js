@@ -200,6 +200,20 @@ async function handleFormSubmit(e) {
     if (fileInput && fileInput.files.length > 0) {
         try {
             var file = fileInput.files[0];
+            
+            if (file.size === 0) {
+                btnSimpan.disabled = false;
+                btnSimpan.innerHTML = 'Simpan';
+                showToast("File tidak dapat dibaca (0 byte). Jika ini file iCloud/Drive, pastikan sudah terunduh ke perangkat Anda.", "error");
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                btnSimpan.disabled = false;
+                btnSimpan.innerHTML = 'Simpan';
+                showToast("Ukuran file terlalu besar. Maksimal 5 MB.", "error");
+                return;
+            }
+            
             payload.fileName = file.name;
             payload.fileMimeType = file.type;
             payload.fileBase64 = await new Promise(function(resolve, reject) {
