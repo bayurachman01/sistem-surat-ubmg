@@ -417,6 +417,177 @@
 
     // Muat data saat halaman siap
     loadDashboard();
+
+    // ─── PANDUAN POPUP (Operator only, once per session) ───────────────────
+    (function() {
+        var user = JSON.parse(sessionStorage.getItem("ubmg_user") || localStorage.getItem("ubmg_user") || "{}");
+        if (!user || user.role !== "Operator") return;
+        if (sessionStorage.getItem("panduan_shown")) return;
+        sessionStorage.setItem("panduan_shown", "1");
+        setTimeout(function() { showPanduanPopup(); }, 700);
+    })();
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     PANDUAN E-LETTER UBM — POPUP MODAL
+══════════════════════════════════════════════════ -->
+<div id="panduan-overlay" style="
+    display:none;position:fixed;inset:0;z-index:9999;
+    background:rgba(15,23,42,0.65);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;
+    padding:16px;
+">
+<div id="panduan-box" style="
+    background:#ffffff;border-radius:20px;
+    max-width:420px;width:100%;
+    box-shadow:0 25px 60px rgba(0,0,0,0.25);
+    overflow:hidden;position:relative;
+    animation: panduanIn .35s cubic-bezier(.34,1.56,.64,1) both;
+">
+    <!-- Header Gradient -->
+    <div id="panduan-hero" style="
+        background:linear-gradient(135deg,#0ea5e9 0%,#6366f1 100%);
+        padding:32px 28px 28px;
+        position:relative;overflow:hidden;text-align:center;
+    ">
+        <!-- Decorative circles -->
+        <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.1);"></div>
+        <div style="position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08);"></div>
+        <!-- Icon -->
+        <div id="panduan-icon" style="
+            width:64px;height:64px;border-radius:16px;
+            background:rgba(255,255,255,.2);
+            margin:0 auto 14px;
+            display:flex;align-items:center;justify-content:center;
+            font-size:32px;line-height:1;
+        ">📋</div>
+        <h2 id="panduan-title" style="margin:0 0 6px;font-size:20px;font-weight:700;color:#fff;letter-spacing:-.3px;">Panduan E-Letter UBM</h2>
+        <p id="panduan-subtitle" style="margin:0;font-size:13px;color:rgba(255,255,255,.85);line-height:1.4;">Selamat datang! Ikuti panduan singkat ini untuk memulai.</p>
+    </div>
+
+    <!-- Step Indicators -->
+    <div style="display:flex;justify-content:center;gap:6px;padding:18px 28px 0;">
+        <div class="panduan-dot" id="dot-0" style="width:8px;height:8px;border-radius:50%;background:#6366f1;transition:all .3s;"></div>
+        <div class="panduan-dot" id="dot-1" style="width:8px;height:8px;border-radius:50%;background:#e2e8f0;transition:all .3s;"></div>
+        <div class="panduan-dot" id="dot-2" style="width:8px;height:8px;border-radius:50%;background:#e2e8f0;transition:all .3s;"></div>
+        <div class="panduan-dot" id="dot-3" style="width:8px;height:8px;border-radius:50%;background:#e2e8f0;transition:all .3s;"></div>
+    </div>
+
+    <!-- Body -->
+    <div id="panduan-body" style="padding:18px 28px 8px;min-height:120px;">
+        <p id="panduan-body-text" style="font-size:14px;color:#475569;line-height:1.7;margin:0;"></p>
+    </div>
+
+    <!-- Footer Buttons -->
+    <div style="display:flex;gap:10px;padding:16px 28px 24px;justify-content:space-between;">
+        <button onclick="closePanduan()" style="
+            flex:1;padding:11px;border-radius:10px;border:1.5px solid #e2e8f0;
+            background:#fff;color:#64748b;font-size:14px;font-weight:500;cursor:pointer;
+            transition:all .2s;
+        " onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+            Lewati
+        </button>
+        <button id="panduan-next-btn" onclick="nextPanduan()" style="
+            flex:2;padding:11px;border-radius:10px;border:none;
+            background:linear-gradient(135deg,#0ea5e9,#6366f1);
+            color:#fff;font-size:14px;font-weight:600;cursor:pointer;
+            transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:6px;
+        " onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+            Lanjut — Lihat Panduan
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+    </div>
+</div>
+</div>
+
+<style>
+@keyframes panduanIn {
+    from { opacity:0; transform:scale(.88) translateY(20px); }
+    to   { opacity:1; transform:scale(1)   translateY(0);    }
+}
+</style>
+
+<script>
+var _panduanStep = 0;
+var _panduanSteps = [
+    {
+        icon: "👋",
+        title: "Selamat Datang, Operator!",
+        subtitle: "Panduan E-Letter UBM",
+        body: "Halo! Anda login sebagai <strong>Operator</strong>. Sistem ini membantu Anda mengelola surat masuk dan keluar Universitas Bina Mandiri Gorontalo secara digital, cepat, dan terstruktur."
+    },
+    {
+        icon: "📥",
+        title: "Surat Masuk",
+        subtitle: "Cara mencatat surat masuk",
+        body: "Klik menu <strong>Surat Masuk</strong> di sidebar. Tekan tombol <strong>+ Tambah Surat Masuk</strong>, isi formulir data surat, lalu upload file PDF/Word jika ada. Klik <strong>Simpan</strong> untuk menyimpan."
+    },
+    {
+        icon: "📤",
+        title: "Surat Keluar",
+        subtitle: "Cara mencatat surat keluar",
+        body: "Klik menu <strong>Surat Keluar</strong> di sidebar. Tekan tombol <strong>+ Tambah Surat Keluar</strong>, isi semua data surat termasuk tujuan dan penandatangan, kemudian klik <strong>Simpan</strong>."
+    },
+    {
+        icon: "📊",
+        title: "Laporan & Cetak",
+        subtitle: "Cara mencetak laporan",
+        body: "Buka menu <strong>Laporan</strong>, pilih jenis dan periode laporan, klik <strong>Tampilkan Laporan</strong>, lalu tekan <strong>Cetak</strong> untuk mencetak laporan resmi lengkap dengan kop surat UBMG."
+    }
+];
+
+function showPanduanPopup() {
+    _panduanStep = 0;
+    renderPanduanStep();
+    var overlay = document.getElementById("panduan-overlay");
+    overlay.style.display = "flex";
+}
+
+function renderPanduanStep() {
+    var step = _panduanSteps[_panduanStep];
+    document.getElementById("panduan-icon").textContent = step.icon;
+    document.getElementById("panduan-title").textContent = step.title;
+    document.getElementById("panduan-subtitle").textContent = step.subtitle;
+    document.getElementById("panduan-body-text").innerHTML = step.body;
+
+    // Update dots
+    for (var i = 0; i < 4; i++) {
+        var dot = document.getElementById("dot-" + i);
+        dot.style.background = (i === _panduanStep) ? "#6366f1" : "#e2e8f0";
+        dot.style.width  = (i === _panduanStep) ? "22px" : "8px";
+        dot.style.borderRadius = "4px";
+    }
+
+    // Update next button text
+    var btn = document.getElementById("panduan-next-btn");
+    if (_panduanStep === _panduanSteps.length - 1) {
+        btn.innerHTML = 'Selesai <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+    } else {
+        btn.innerHTML = 'Lanjut — Lihat Panduan <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>';
+    }
+}
+
+function nextPanduan() {
+    if (_panduanStep < _panduanSteps.length - 1) {
+        _panduanStep++;
+        renderPanduanStep();
+    } else {
+        closePanduan();
+    }
+}
+
+function closePanduan() {
+    var overlay = document.getElementById("panduan-overlay");
+    overlay.style.opacity = "0";
+    overlay.style.transition = "opacity .25s";
+    setTimeout(function() {
+        overlay.style.display = "none";
+        overlay.style.opacity = "";
+        overlay.style.transition = "";
+    }, 260);
+}
 </script>
 
 </body>
