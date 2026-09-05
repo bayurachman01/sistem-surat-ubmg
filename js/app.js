@@ -205,6 +205,15 @@ function initSidebar() {
             window.location.href = "index.html";
         });
     }
+
+    // Tombol logout dari menu sidebar
+    var logoutMenus = document.querySelectorAll(".btn-logout-menu");
+    logoutMenus.forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            clearSession();
+            window.location.href = "index.html";
+        });
+    });
 }
 
 // ===================================================================================
