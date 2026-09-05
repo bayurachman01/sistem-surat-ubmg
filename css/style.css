@@ -1130,6 +1130,13 @@ textarea.form-control {
     animation: slideUp 0.2s ease;
 }
 
+.modal-box form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
 .modal-box.modal-lg {
     max-width: 720px;
 }
