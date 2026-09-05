@@ -343,6 +343,9 @@ button {
     display: flex;
     align-items: center;
     gap: 16px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .btn-toggle-sidebar {
@@ -368,6 +371,15 @@ button {
     gap: 6px;
     font-size: 13px;
     color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.breadcrumb-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
 }
 
 .breadcrumb-item.active {
@@ -383,6 +395,7 @@ button {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
 }
 
 .topbar-search {
@@ -481,6 +494,10 @@ button {
     font-size: 13px;
     font-weight: 500;
     color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
 }
 
 /* ----------------------------------------------------------------
@@ -1862,6 +1879,48 @@ textarea.form-control {
         padding: 16px;
         max-width: 100vw;
         overflow-x: hidden;
+    }
+
+    /* Topbar mobile fix */
+    .topbar {
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    .topbar-left {
+        gap: 8px;
+    }
+
+    .breadcrumb {
+        font-size: 12px;
+    }
+
+    .breadcrumb-item {
+        max-width: 80px;
+    }
+
+    .topbar-user-name {
+        font-size: 11px;
+        max-width: 90px;
+    }
+
+    .topbar-user-btn {
+        padding: 4px 8px 4px 4px;
+        gap: 5px;
+    }
+
+    .topbar-user-avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+
+    /* Page header subtitle on mobile — single line truncate */
+    .page-subtitle {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
     }
 }
 
