@@ -160,6 +160,9 @@ function openFormModal(id) {
         document.getElementById("modal-form-title").textContent = "Tambah Surat Masuk";
     }
 
+    var fileInput = document.getElementById("upload-file");
+    if (fileInput) fileInput.value = "";
+
     openModal("modal-form");
 }
 
@@ -191,6 +194,27 @@ async function handleFormSubmit(e) {
     var btnSimpan = document.getElementById("btn-form-simpan");
     btnSimpan.disabled   = true;
     btnSimpan.innerHTML  = '<span class="spinner-inline"></span> Menyimpan...';
+
+    // Proses file upload jika ada
+    var fileInput = document.getElementById("upload-file");
+    if (fileInput && fileInput.files.length > 0) {
+        try {
+            var file = fileInput.files[0];
+            payload.fileName = file.name;
+            payload.fileMimeType = file.type;
+            payload.fileBase64 = await new Promise(function(resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function() { resolve(reader.result.split(',')[1]); };
+                reader.onerror = function(error) { reject(error); };
+                reader.readAsDataURL(file);
+            });
+        } catch (e) {
+            btnSimpan.disabled  = false;
+            btnSimpan.innerHTML = 'Simpan';
+            showToast("Gagal membaca file lampiran.", "error");
+            return;
+        }
+    }
 
     var result;
     if (editingId) {

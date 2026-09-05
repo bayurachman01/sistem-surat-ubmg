@@ -155,6 +155,23 @@ function generateId() {
 }
 
 // ===================================================================================
+// HELPER - UPLOAD FILE
+// ===================================================================================
+
+function uploadFileToDrive(base64Data, fileName, mimeType) {
+  try {
+    var data = Utilities.base64Decode(base64Data);
+    var blob = Utilities.newBlob(data, mimeType, fileName);
+    var file = DriveApp.createFile(blob);
+    // Jadikan file dapat diakses publik untuk dilihat
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return file.getUrl();
+  } catch (e) {
+    throw new Error("Gagal mengupload file ke Drive: " + e.message);
+  }
+}
+
+// ===================================================================================
 // AUTENTIKASI
 // ===================================================================================
 
@@ -233,6 +250,13 @@ function addSuratMasuk(params) {
     var id    = generateId();
     var now   = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm:ss");
 
+    var linkLampiran = params.linkLampiran || "";
+    
+    // Cek apakah ada upload file base64
+    if (params.fileBase64 && params.fileName) {
+      linkLampiran = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
+    }
+
     var newRow = [
       id,
       params.nomorSurat    || "",
@@ -244,7 +268,7 @@ function addSuratMasuk(params) {
       params.ditujukanKepada || "",
       params.status        || "Pending",
       params.keterangan    || "",
-      params.linkLampiran  || "",
+      linkLampiran,
       params.dibuatOleh    || "",
       now
     ];
@@ -262,6 +286,11 @@ function updateSuratMasuk(params) {
     var sheet = getSheet(SHEET_SURAT_MASUK);
     var data  = sheet.getDataRange().getValues();
 
+    var linkLampiran = params.linkLampiran;
+    if (params.fileBase64 && params.fileName) {
+      linkLampiran = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
+    }
+
     for (var i = 1; i < data.length; i++) {
       if (data[i][0].toString() === params.id.toString()) {
         var rowNum = i + 1;
@@ -274,7 +303,7 @@ function updateSuratMasuk(params) {
         sheet.getRange(rowNum, 8).setValue(params.ditujukanKepada || data[i][7]);
         sheet.getRange(rowNum, 9).setValue(params.status         || data[i][8]);
         sheet.getRange(rowNum, 10).setValue(params.keterangan    || data[i][9]);
-        sheet.getRange(rowNum, 11).setValue(params.linkLampiran  || data[i][10]);
+        sheet.getRange(rowNum, 11).setValue(linkLampiran !== undefined ? linkLampiran : data[i][10]);
         return { success: true, message: "Surat masuk berhasil diperbarui." };
       }
     }
@@ -341,6 +370,13 @@ function addSuratKeluar(params) {
     var id    = generateId();
     var now   = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm:ss");
 
+    var linkLampiran = params.linkLampiran || "";
+    
+    // Cek apakah ada upload file base64
+    if (params.fileBase64 && params.fileName) {
+      linkLampiran = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
+    }
+
     var newRow = [
       id,
       params.nomorSurat      || "",
@@ -351,7 +387,7 @@ function addSuratKeluar(params) {
       params.penandatangan   || "",
       params.status          || "Draft",
       params.keterangan      || "",
-      params.linkLampiran    || "",
+      linkLampiran,
       params.dibuatOleh      || "",
       now
     ];
@@ -369,6 +405,11 @@ function updateSuratKeluar(params) {
     var sheet = getSheet(SHEET_SURAT_KELUAR);
     var data  = sheet.getDataRange().getValues();
 
+    var linkLampiran = params.linkLampiran;
+    if (params.fileBase64 && params.fileName) {
+      linkLampiran = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
+    }
+
     for (var i = 1; i < data.length; i++) {
       if (data[i][0].toString() === params.id.toString()) {
         var rowNum = i + 1;
@@ -380,7 +421,7 @@ function updateSuratKeluar(params) {
         sheet.getRange(rowNum, 7).setValue(params.penandatangan || data[i][6]);
         sheet.getRange(rowNum, 8).setValue(params.status        || data[i][7]);
         sheet.getRange(rowNum, 9).setValue(params.keterangan    || data[i][8]);
-        sheet.getRange(rowNum, 10).setValue(params.linkLampiran || data[i][9]);
+        sheet.getRange(rowNum, 10).setValue(linkLampiran !== undefined ? linkLampiran : data[i][9]);
         return { success: true, message: "Surat keluar berhasil diperbarui." };
       }
     }
