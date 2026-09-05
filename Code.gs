@@ -290,8 +290,9 @@ function updateSuratMasuk(params) {
     var data  = sheet.getDataRange().getValues();
 
     var linkLampiran = params.linkLampiran;
+    var fileUploadUrl = undefined;
     if (params.fileBase64 && params.fileName) {
-      linkLampiran = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
+      fileUploadUrl = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
     }
 
     for (var i = 1; i < data.length; i++) {
