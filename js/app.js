@@ -354,3 +354,26 @@ function resetFormValidation(form) {
     var errors = form.querySelectorAll(".invalid-feedback");
     errors.forEach(function(e) { e.classList.add("hidden"); });
 }
+
+// ===================================================================================
+// EVENT LISTENER GLOBAL TAMBAHAN
+// ===================================================================================
+document.addEventListener("DOMContentLoaded", function() {
+    // Logika Kategori Surat 'Lainnya'
+    var kategoriSelect = document.getElementById("kategori");
+    var kategoriLainnyaGroup = document.getElementById("kategori-lainnya-group");
+    var kategoriLainnyaInput = document.getElementById("kategori-lainnya");
+
+    if (kategoriSelect && kategoriLainnyaGroup && kategoriLainnyaInput) {
+        kategoriSelect.addEventListener("change", function() {
+            if (this.value === "Lainnya") {
+                kategoriLainnyaGroup.classList.remove("hidden");
+                kategoriLainnyaInput.setAttribute("required", "required");
+            } else {
+                kategoriLainnyaGroup.classList.add("hidden");
+                kategoriLainnyaInput.removeAttribute("required");
+                kategoriLainnyaInput.value = ""; // Bersihkan isi
+            }
+        });
+    }
+});
