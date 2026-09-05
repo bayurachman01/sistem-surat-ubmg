@@ -16,7 +16,7 @@
 
 <div class="app-wrapper">
 
-    <aside id="sidebar" class="sidebar">
+    <aside id="sidebar" class="sidebar no-print">
         <div class="sidebar-logo">
             <img src="https://ubmg.ac.id/storage/website/ubmgicon.png" alt="Logo UBMG">
             <div class="sidebar-logo-text">
@@ -65,7 +65,7 @@
     </aside>
 
     <main class="main-content">
-        <header class="topbar">
+        <header class="topbar no-print">
             <div class="topbar-left">
                 <button class="btn-toggle-sidebar" id="btn-toggle-sidebar"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg></button>
                 <nav class="breadcrumb">
@@ -83,13 +83,13 @@
         </header>
 
         <div class="page-content">
-            <div class="page-header">
+            <div class="page-header no-print">
                 <h1 class="page-title">Laporan Surat</h1>
                 <p class="page-subtitle">Rekap dan analisis data surat masuk dan keluar berdasarkan periode</p>
             </div>
 
             <!-- Filter Laporan -->
-            <div class="card mb-16">
+            <div class="card mb-16 no-print">
                 <div class="card-header">
                     <h2 class="card-title">Filter Laporan</h2>
                 </div>
@@ -125,6 +125,20 @@
 
             <!-- Ringkasan -->
             <div id="laporan-content" class="hidden">
+                <!-- Kop Surat Khusus Cetak -->
+                <div class="print-header print-only">
+                    <div class="kop-surat">
+                        <img src="https://ubmg.ac.id/storage/website/ubmgicon.png" alt="Logo UBMG">
+                        <div class="kop-text">
+                            <h2>YAYASAN BINA MANDIRI GORONTALO</h2>
+                            <h1>UNIVERSITAS BINA MANDIRI GORONTALO</h1>
+                            <p>Jl. Prof. Dr. H. Aloei Saboe No. 173, Kel. Wongkaditi, Kec. Kota Utara, Kota Gorontalo</p>
+                            <p>Website: www.ubmg.ac.id | Email: info@ubmg.ac.id</p>
+                        </div>
+                    </div>
+                    <hr class="kop-separator">
+                    <h2 class="print-title">LAPORAN DATA SURAT</h2>
+                </div>
                 <div class="report-summary-grid mb-16">
                     <div class="report-summary-card">
                         <p class="label">Total Surat Masuk</p>

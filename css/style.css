@@ -1864,3 +1864,190 @@ textarea.form-control {
         overflow-x: hidden;
     }
 }
+
+/* ==========================================================================
+   PRINT STYLES
+   ========================================================================== */
+.print-only {
+    display: none;
+}
+
+@media print {
+    body {
+        background-color: #fff;
+        color: #000;
+        font-size: 12pt;
+    }
+    
+    .no-print,
+    .no-print * {
+        display: none !important;
+    }
+    
+    .print-only {
+        display: block !important;
+    }
+    
+    .app-wrapper {
+        display: block;
+        height: auto;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+    
+    .page-content {
+        padding: 0 !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+    }
+    
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+        margin-bottom: 20px !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+    
+    .card-header {
+        border-bottom: 2px solid #000 !important;
+        padding: 0 0 10px 0 !important;
+        background-color: transparent !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .card-title {
+        color: #000 !important;
+        font-size: 14pt !important;
+    }
+    
+    /* Kop Surat Styling */
+    .print-header {
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .kop-surat {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+    
+    .kop-surat img {
+        width: 80px;
+        height: auto;
+        margin-right: 20px;
+    }
+    
+    .kop-text {
+        text-align: center;
+    }
+    
+    .kop-text h2 {
+        font-size: 14pt;
+        font-weight: normal;
+        margin: 0 0 5px 0;
+        color: #000 !important;
+    }
+    
+    .kop-text h1 {
+        font-size: 18pt;
+        font-weight: bold;
+        margin: 0 0 5px 0;
+        text-transform: uppercase;
+        color: #000 !important;
+    }
+    
+    .kop-text p {
+        font-size: 10pt;
+        margin: 0 0 2px 0;
+        color: #000 !important;
+    }
+    
+    .kop-separator {
+        border: none;
+        border-top: 3px solid #000;
+        border-bottom: 1px solid #000;
+        height: 5px;
+        margin: 15px 0;
+    }
+    
+    .print-title {
+        text-align: center;
+        font-size: 14pt;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-decoration: underline;
+        text-transform: uppercase;
+        color: #000 !important;
+    }
+    
+    /* Table Styling for Print */
+    .table-wrapper {
+        overflow: visible !important;
+    }
+    
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+    
+    th, td {
+        border: 1px solid #000 !important;
+        padding: 8px !important;
+        text-align: left !important;
+        color: #000 !important;
+    }
+    
+    th {
+        background-color: #f2f2f2 !important;
+        font-weight: bold !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .badge {
+        border: 1px solid #000 !important;
+        color: #000 !important;
+        background: transparent !important;
+    }
+    
+    /* Report Summary Grid */
+    .report-summary-grid {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        gap: 20px !important;
+        margin-bottom: 30px !important;
+    }
+    
+    .report-summary-card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+        background-color: transparent !important;
+        flex: 1 !important;
+        text-align: center !important;
+        padding: 15px !important;
+    }
+    
+    .report-summary-card .value {
+        color: #000 !important;
+    }
+    
+    .report-summary-card .label {
+        color: #000 !important;
+    }
+    
+    /* Force background colors to print if needed */
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
