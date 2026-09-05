@@ -166,6 +166,15 @@ function initSidebar() {
             sidebar.classList.remove("sidebar-open");
             overlay.classList.remove("show");
         });
+        
+        // Tutup sidebar jika tombol X diklik (Mobile)
+        var btnClose = document.getElementById("btn-close-sidebar");
+        if (btnClose) {
+            btnClose.addEventListener("click", function() {
+                sidebar.classList.remove("sidebar-open");
+                overlay.classList.remove("show");
+            });
+        }
     }
 
     // Tandai menu aktif berdasarkan halaman saat ini

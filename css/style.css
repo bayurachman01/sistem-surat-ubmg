@@ -145,6 +145,26 @@ button {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.btn-close-sidebar {
+    display: none;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    margin-left: auto;
+    padding: 4px;
+    transition: var(--transition);
+}
+
+.btn-close-sidebar svg {
+    width: 24px;
+    height: 24px;
+}
+
+.btn-close-sidebar:hover {
+    color: var(--color-danger);
+}
+
 .sidebar-logo img {
     width: 40px;
     height: 40px;
@@ -1685,6 +1705,10 @@ textarea.form-control {
     /* Mencegah auto-zoom di iOS/Mobile */
     input, select, textarea {
         font-size: 16px !important;
+    }
+
+    .btn-close-sidebar {
+        display: block;
     }
 
     .sidebar {
