@@ -273,7 +273,19 @@ function addSuratMasuk(params) {
       fileUploadUrl = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
     }
 
-    var headers = sheet.getRange(1, 1, 1, Math.max(14, sheet.getLastColumn())).getValues()[0];
+    var currentLastColumn = sheet.getLastColumn();
+    var headers = sheet.getRange(1, 1, 1, Math.max(14, currentLastColumn)).getValues()[0];
+    
+    // Automatically fix missing columns for disposisi
+    var requiredNewColumns = ["Diteruskan Ke", "Status Baca", "Catatan Rektor"];
+    for (var j = 0; j < requiredNewColumns.length; j++) {
+      if (headers.indexOf(requiredNewColumns[j]) === -1) {
+        headers.push(requiredNewColumns[j]);
+        currentLastColumn = headers.length;
+        sheet.getRange(1, currentLastColumn).setValue(requiredNewColumns[j]);
+      }
+    }
+
     var newRow = new Array(headers.length).fill("");
     
     // Map values to correct columns based on header names
@@ -309,6 +321,22 @@ function addSuratMasuk(params) {
 function updateSuratMasuk(params) {
   try {
     var sheet = getSheet(SHEET_SURAT_MASUK);
+    
+    var currentLastColumn = sheet.getLastColumn();
+    var headers = sheet.getRange(1, 1, 1, Math.max(14, currentLastColumn)).getValues()[0];
+    
+    // Automatically fix missing columns for disposisi
+    var requiredNewColumns = ["Diteruskan Ke", "Status Baca", "Catatan Rektor"];
+    var madeChanges = false;
+    for (var j = 0; j < requiredNewColumns.length; j++) {
+      if (headers.indexOf(requiredNewColumns[j]) === -1) {
+        headers.push(requiredNewColumns[j]);
+        currentLastColumn = headers.length;
+        sheet.getRange(1, currentLastColumn).setValue(requiredNewColumns[j]);
+        madeChanges = true;
+      }
+    }
+    
     var data  = sheet.getDataRange().getValues();
 
     var linkLampiran = params.linkLampiran;
@@ -529,8 +557,17 @@ function deleteSuratKeluar(params) {
 
 function getDashboardStats(params) {
   try {
-    var suratMasuk  = getSheetData(SHEET_SURAT_MASUK);
-    var suratKeluar = getSheetData(SHEET_SURAT_KELUAR);
+    var rawSuratMasuk  = getSheetData(SHEET_SURAT_MASUK);
+    var rawSuratKeluar = getSheetData(SHEET_SURAT_KELUAR);
+
+    var suratMasuk = rawSuratMasuk;
+    var suratKeluar = rawSuratKeluar;
+    
+    // Strict separation: Rektor only sees disposisi to Rektor
+    if (params && params.role === "Rektor") {
+      suratMasuk = rawSuratMasuk.filter(function(r) { return r["Diteruskan Ke"] === "Rektor"; });
+      suratKeluar = rawSuratKeluar.filter(function(r) { return r["Diteruskan Ke"] === "Rektor"; }); // if outgoing has disposisi, else empty or filtered
+    }
 
     var totalMasuk   = suratMasuk.length;
     var totalKeluar  = suratKeluar.length;

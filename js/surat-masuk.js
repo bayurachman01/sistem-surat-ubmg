@@ -14,6 +14,14 @@ var viewingItem    = null;
 
 document.addEventListener("DOMContentLoaded", function() {
     requireAuth();
+    
+    var session = getSession();
+    // Strict separation: Rektor is NOT allowed to access surat-masuk.html (Operator's page)
+    if (session && session.role === "Rektor") {
+        window.location.href = "dashboard.html";
+        return;
+    }
+
     populateUserInfo();
     initSidebar();
     bindEvents();

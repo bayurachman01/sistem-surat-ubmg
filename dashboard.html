@@ -210,7 +210,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Surat Terbaru</h2>
-                        <a href="surat-masuk.html" class="btn btn-sm btn-outline">Lihat Semua</a>
+                        <a href="surat-masuk.html" id="btn-lihat-semua-list" class="btn btn-sm btn-outline">Lihat Semua</a>
                     </div>
                     <div class="card-body" style="padding: 0 20px;">
                         <div class="recent-list" id="recent-list">
@@ -225,7 +225,7 @@
             <div class="card mt-16">
                 <div class="card-header">
                     <h2 class="card-title">Surat Masuk Terbaru</h2>
-                    <a href="surat-masuk.html" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
+                    <a href="surat-masuk.html" id="btn-lihat-semua-table" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
                 </div>
                 <div class="table-wrapper">
                     <table>
@@ -274,6 +274,12 @@
     var optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     document.getElementById("dashboard-date").textContent =
         "Selamat datang kembali. Hari ini " + today.toLocaleDateString('id-ID', optionsDate);
+
+    var session = getSession();
+    if (session && session.role === "Rektor") {
+        document.getElementById("btn-lihat-semua-list").href = "kotak-masuk.html";
+        document.getElementById("btn-lihat-semua-table").href = "kotak-masuk.html";
+    }
 
     async function loadDashboard() {
         showSpinner();

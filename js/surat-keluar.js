@@ -9,6 +9,14 @@ var deletingIdKeluar = null;
 
 document.addEventListener("DOMContentLoaded", function() {
     requireAuth();
+    
+    var session = getSession();
+    // Strict separation: Rektor is NOT allowed to access surat-keluar.html (Operator's page)
+    if (session && session.role === "Rektor") {
+        window.location.href = "dashboard.html";
+        return;
+    }
+
     populateUserInfo();
     initSidebar();
     bindEventsKeluar();

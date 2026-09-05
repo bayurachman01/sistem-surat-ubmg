@@ -56,7 +56,9 @@ async function apiLogin(username, password) {
 // ===================================================================================
 
 async function apiGetDashboardStats() {
-    return await apiRequest({ action: "getDashboardStats" });
+    var session = getSession();
+    var role = session ? session.role : "";
+    return await apiRequest({ action: "getDashboardStats", role: role });
 }
 
 // ===================================================================================
