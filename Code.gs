@@ -158,6 +158,15 @@ function generateId() {
 // HELPER - UPLOAD FILE
 // ===================================================================================
 
+function getOrCreateFolder(folderName, parentFolder) {
+  var folders = parentFolder.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    return parentFolder.createFolder(folderName);
+  }
+}
+
 function uploadFileToDrive(base64Data, fileName, mimeType) {
   try {
     var blob = Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName);
