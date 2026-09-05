@@ -160,11 +160,13 @@ function generateId() {
 
 function uploadFileToDrive(base64Data, fileName, mimeType) {
   try {
-    var data = Utilities.base64Decode(base64Data);
-    var blob = Utilities.newBlob(data, mimeType, fileName);
-    var file = DriveApp.createFile(blob);
-    // Jadikan file dapat diakses publik untuk dilihat
+    var blob = Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName);
+    var folder = DriveApp.getRootFolder();
+    var ubmgFolder = getOrCreateFolder("Sistem Surat UBMG Uploads", folder);
+    var file = ubmgFolder.createFile(blob);
+    
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    
     return file.getUrl();
   } catch (e) {
     throw new Error("Gagal mengupload file ke Drive: " + e.message);
@@ -752,4 +754,10 @@ function initializeSpreadsheet() {
   }
 
   Logger.log("Spreadsheet berhasil diinisialisasi.");
+}
+
+function testDrivePermission() {
+  // Fungsi ini HANYA untuk memancing Google meminta izin (permission) akses Google Drive.
+  DriveApp.getRootFolder();
+  Logger.log("Akses Drive Berhasil Diberikan!");
 }
