@@ -1752,18 +1752,21 @@ textarea.form-control {
     position: relative;
 }
 
+.table-scroll-hint {
+    display: none;
+}
+
 @media (max-width: 768px) {
-    .table-wrapper::after {
-        content: "← Geser ke kanan untuk melihat detail →";
+    .table-scroll-hint {
         display: block;
         text-align: center;
         font-size: 10px;
         color: var(--color-text-muted);
-        padding: 6px 0 2px;
+        padding: 6px 0 4px;
         letter-spacing: 0.3px;
-        opacity: 0.65;
-        pointer-events: none;
+        opacity: 0.6;
         font-style: italic;
+        margin: 0;
     }
 }
 
