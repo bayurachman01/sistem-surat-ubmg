@@ -1755,6 +1755,12 @@ textarea.form-control {
 }
 
 @media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
     .table-scroll-hint {
         display: block;
         text-align: center;
@@ -1851,12 +1857,6 @@ textarea.form-control {
 }
 
 @media (max-width: 600px) {
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-    
     .stats-grid {
         grid-template-columns: 1fr;
     }
