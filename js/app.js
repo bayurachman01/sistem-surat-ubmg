@@ -151,8 +151,20 @@ function initSidebar() {
     var sidebar   = document.getElementById("sidebar");
 
     if (btnToggle && sidebar) {
+        // Buat overlay untuk mobile
+        var overlay = document.createElement("div");
+        overlay.className = "sidebar-overlay";
+        document.body.appendChild(overlay);
+
         btnToggle.addEventListener("click", function() {
             sidebar.classList.toggle("sidebar-open");
+            overlay.classList.toggle("show");
+        });
+
+        // Tutup sidebar jika overlay diklik
+        overlay.addEventListener("click", function() {
+            sidebar.classList.remove("sidebar-open");
+            overlay.classList.remove("show");
         });
     }
 
