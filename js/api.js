@@ -71,12 +71,21 @@ async function apiAddSuratMasuk(data) {
     return await apiRequest(Object.assign({ action: "addSuratMasuk" }, data));
 }
 
-async function apiUpdateSuratMasuk(data) {
-    return await apiRequest(Object.assign({ action: "updateSuratMasuk" }, data));
+async function apiUpdateSuratMasuk(payload) {
+    payload.action = "updateSuratMasuk";
+    return await apiRequest(payload);
 }
 
 async function apiDeleteSuratMasuk(id) {
-    return await apiRequest({ action: "deleteSuratMasuk", id: id });
+    return await apiRequest({
+        action: "deleteSuratMasuk",
+        id: id
+    });
+}
+
+async function apiUpdateDisposisi(payload) {
+    payload.action = "updateDisposisi";
+    return await apiRequest(payload);
 }
 
 // ===================================================================================

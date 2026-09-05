@@ -49,6 +49,9 @@ function doPost(e) {
       case "updateSuratMasuk":
         result = updateSuratMasuk(params);
         break;
+      case "updateDisposisi":
+        result = updateDisposisi(params);
+        break;
       case "deleteSuratMasuk":
         result = deleteSuratMasuk(params);
         break;
@@ -290,6 +293,9 @@ function addSuratMasuk(params) {
       else if (headerName === "File Upload") newRow[i] = fileUploadUrl;
       else if (headerName === "Dibuat Oleh") newRow[i] = params.dibuatOleh || "";
       else if (headerName === "Tanggal Input") newRow[i] = now;
+      else if (headerName === "Diteruskan Ke") newRow[i] = params.diteruskanKe || "";
+      else if (headerName === "Status Baca") newRow[i] = params.statusBaca || "Belum Dibaca";
+      else if (headerName === "Catatan Rektor") newRow[i] = params.catatanRektor || "";
     }
 
     sheet.appendRow(newRow);
@@ -327,16 +333,28 @@ function updateSuratMasuk(params) {
         var headers = data[0];
         var colLinkLampiran = 11; // default
         var colFileUpload = 12; // default
+        var colDiteruskan = -1;
+        var colStatusBaca = -1;
+        var colCatatanRektor = -1;
+        
         for (var h = 0; h < headers.length; h++) {
           var headerName = headers[h].toString().trim();
           if (headerName === "Link Lampiran") colLinkLampiran = h + 1;
           if (headerName === "File Upload") colFileUpload = h + 1;
+          if (headerName === "Diteruskan Ke") colDiteruskan = h + 1;
+          if (headerName === "Status Baca") colStatusBaca = h + 1;
+          if (headerName === "Catatan Rektor") colCatatanRektor = h + 1;
         }
         
         sheet.getRange(rowNum, colLinkLampiran).setValue(linkLampiran !== undefined ? linkLampiran : data[i][colLinkLampiran-1]);
         if (fileUploadUrl !== undefined) {
           sheet.getRange(rowNum, colFileUpload).setValue(fileUploadUrl);
         }
+        
+        if (colDiteruskan > -1 && params.diteruskanKe !== undefined) sheet.getRange(rowNum, colDiteruskan).setValue(params.diteruskanKe);
+        if (colStatusBaca > -1 && params.statusBaca !== undefined) sheet.getRange(rowNum, colStatusBaca).setValue(params.statusBaca);
+        if (colCatatanRektor > -1 && params.catatanRektor !== undefined) sheet.getRange(rowNum, colCatatanRektor).setValue(params.catatanRektor);
+
         return { success: true, message: "Data Surat Masuk berhasil diperbarui." };
       }
     }
@@ -732,7 +750,8 @@ function initializeSpreadsheet() {
   var headersMasuk = [
     "ID", "Nomor Surat", "Tanggal Surat", "Tanggal Terima",
     "Pengirim", "Perihal", "Kategori", "Ditujukan Kepada",
-    "Status", "Keterangan", "Link Lampiran", "File Upload", "Dibuat Oleh", "Tanggal Input"
+    "Status", "Keterangan", "Link Lampiran", "File Upload", "Dibuat Oleh", "Tanggal Input",
+    "Diteruskan Ke", "Status Baca", "Catatan Rektor"
   ];
   sheetMasuk.getRange(1, 1, 1, headersMasuk.length).setValues([headersMasuk]);
 
@@ -774,5 +793,39 @@ function testDrivePermission() {
     return "Izin Google Drive penuh berhasil diberikan!";
   } catch (e) {
     return "Error: " + e.message;
+  }
+}
+
+function updateDisposisi(params) {
+  try {
+    var sheet = getSheet(SHEET_SURAT_MASUK);
+    var data  = sheet.getDataRange().getValues();
+    
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][0].toString() === params.id.toString()) {
+        var rowNum = i + 1;
+        var headers = data[0];
+        
+        var colStatusBaca = -1;
+        var colCatatanRektor = -1;
+        var colStatus = -1;
+        
+        for (var h = 0; h < headers.length; h++) {
+          var headerName = headers[h].toString().trim();
+          if (headerName === "Status Baca") colStatusBaca = h + 1;
+          if (headerName === "Catatan Rektor") colCatatanRektor = h + 1;
+          if (headerName === "Status") colStatus = h + 1;
+        }
+        
+        if (colStatusBaca > -1 && params.statusBaca !== undefined) sheet.getRange(rowNum, colStatusBaca).setValue(params.statusBaca);
+        if (colCatatanRektor > -1 && params.catatanRektor !== undefined) sheet.getRange(rowNum, colCatatanRektor).setValue(params.catatanRektor);
+        if (colStatus > -1 && params.status !== undefined) sheet.getRange(rowNum, colStatus).setValue(params.status);
+        
+        return { success: true, message: "Disposisi berhasil diperbarui." };
+      }
+    }
+    return { success: false, message: "Surat tidak ditemukan." };
+  } catch (error) {
+    return { success: false, message: "Gagal memperbarui disposisi: " + error.message };
   }
 }

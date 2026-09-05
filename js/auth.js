@@ -106,4 +106,96 @@ function populateUserInfo() {
 
     if (elTopbarAvatar) elTopbarAvatar.textContent = initials;
     if (elTopbarName)   elTopbarName.textContent   = session.namaLengkap;
+    
+    renderRoleBasedUI(session.role);
 }
+
+/**
+ * Sesuaikan menu sidebar berdasarkan Role
+ */
+function renderRoleBasedUI(role) {
+    var sidebarMenu = document.querySelector('.sidebar-menu');
+    if (!sidebarMenu) return;
+
+    if (role === 'Rektor') {
+        // Sembunyikan menu operator/admin
+        var items = sidebarMenu.querySelectorAll('.sidebar-menu-item:not([data-page="dashboard.html"]):not(.btn-logout-menu)');
+        items.forEach(function(el) { el.style.display = 'none'; });
+        
+        var labels = sidebarMenu.querySelectorAll('.sidebar-menu-label:not(:first-child)');
+        labels.forEach(function(el) { el.style.display = 'none'; });
+
+        // Tambahkan menu khusus Rektor jika belum ada
+        if (!document.querySelector('[data-page="kotak-masuk.html"]')) {
+            var rektorMenuHTML = `
+                <p class="sidebar-menu-label" style="margin-top:20px;">Disposisi</p>
+                <div class="sidebar-menu-item" data-page="kotak-masuk.html" onclick="window.location.href='kotak-masuk.html'">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.909A2.25 2.25 0 012.25 7v-.243m19.5 0V7" />
+                    </svg>
+                    <span class="menu-text">Kotak Masuk</span>
+                </div>
+                <div class="sidebar-menu-item" data-page="arsip.html" onclick="window.location.href='arsip.html'">
+                    <svg class="menu-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                    </svg>
+                    <span class="menu-text">Arsip Rektor</span>
+                </div>
+            `;
+            
+            // Insert after dashboard
+            var dashboardMenu = sidebarMenu.querySelector('[data-page="dashboard.html"]');
+            if (dashboardMenu) {
+                dashboardMenu.insertAdjacentHTML('afterend', rektorMenuHTML);
+            }
+        }
+    } else if (role === 'Operator') {
+        // Sembunyikan menu pengaturan dari operator
+        var menuPengaturan = sidebarMenu.querySelector('[data-page="pengaturan.html"]');
+        if (menuPengaturan) menuPengaturan.style.display = 'none';
+        var labelPengaturan = sidebarMenu.querySelectorAll('.sidebar-menu-label')[2];
+        if (labelPengaturan && labelPengaturan.textContent.includes('Sistem')) {
+            labelPengaturan.style.display = 'none';
+        }
+    }
+}
+
+// ===================================================================================
+// NOTIFIKASI
+// ===================================================================================
+
+async function checkNotifications() {
+    var session = getSession();
+    if (!session || session.role !== 'Rektor') return;
+
+    // Cek jumlah pesan yang belum dibaca
+    var result = await apiGetSuratMasuk({});
+    if (result.success && result.data) {
+        var unreadCount = result.data.filter(function(item) {
+            return item["Diteruskan Ke"] === session.role && item["Status Baca"] === "Belum Dibaca";
+        }).length;
+
+        var bellBtns = document.querySelectorAll('.topbar-icon-btn[title="Notifikasi"]');
+        bellBtns.forEach(function(btn) {
+            // Hapus dot lama jika ada
+            var oldDot = btn.querySelector('.notification-dot');
+            if (oldDot) oldDot.remove();
+            
+            if (unreadCount > 0) {
+                var dot = document.createElement('div');
+                dot.className = 'notification-dot';
+                dot.title = unreadCount + ' belum dibaca';
+                btn.appendChild(dot);
+                
+                // Tambahkan event click untuk langsung ke kotak masuk
+                btn.onclick = function() {
+                    window.location.href = 'kotak-masuk.html';
+                };
+            }
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(checkNotifications, 1000);
+});
