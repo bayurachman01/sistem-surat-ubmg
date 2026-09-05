@@ -1746,6 +1746,28 @@ textarea.form-control {
 .gap-12 { gap: 12px; }
 
 /* ----------------------------------------------------------------
+   26b. TABLE SCROLL HINT (Mobile)
+----------------------------------------------------------------- */
+.table-wrapper {
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .table-wrapper::after {
+        content: "← Geser ke kanan untuk melihat detail →";
+        display: block;
+        text-align: center;
+        font-size: 10px;
+        color: var(--color-text-muted);
+        padding: 6px 0 2px;
+        letter-spacing: 0.3px;
+        opacity: 0.65;
+        pointer-events: none;
+        font-style: italic;
+    }
+}
+
+/* ----------------------------------------------------------------
    27. RESPONSIVE
 ----------------------------------------------------------------- */
 
