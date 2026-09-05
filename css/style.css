@@ -1748,25 +1748,24 @@ textarea.form-control {
 /* ----------------------------------------------------------------
    26b. TABLE SCROLL HINT (Mobile)
 ----------------------------------------------------------------- */
-.table-wrapper {
-    position: relative;
-}
-
 .table-scroll-hint {
     display: none;
+    text-align: center;
+    width: 100%;
 }
 
 @media (max-width: 768px) {
     .table-scroll-hint {
         display: block;
         text-align: center;
+        width: 100%;
         font-size: 10px;
         color: var(--color-text-muted);
-        padding: 6px 0 4px;
+        padding: 8px 0 4px;
         letter-spacing: 0.3px;
         opacity: 0.6;
         font-style: italic;
-        margin: 0;
+        margin: 0 auto;
     }
 }
 
