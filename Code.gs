@@ -252,9 +252,11 @@ function addSuratMasuk(params) {
 
     var linkLampiran = params.linkLampiran || "";
     
+    var fileUploadUrl = "";
+    
     // Cek apakah ada upload file base64
     if (params.fileBase64 && params.fileName) {
-      linkLampiran = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
+      fileUploadUrl = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
     }
 
     var newRow = [
@@ -269,6 +271,7 @@ function addSuratMasuk(params) {
       params.status        || "Pending",
       params.keterangan    || "",
       linkLampiran,
+      fileUploadUrl,
       params.dibuatOleh    || "",
       now
     ];
@@ -304,6 +307,9 @@ function updateSuratMasuk(params) {
         sheet.getRange(rowNum, 9).setValue(params.status         || data[i][8]);
         sheet.getRange(rowNum, 10).setValue(params.keterangan    || data[i][9]);
         sheet.getRange(rowNum, 11).setValue(linkLampiran !== undefined ? linkLampiran : data[i][10]);
+        if (fileUploadUrl !== undefined) {
+          sheet.getRange(rowNum, 12).setValue(fileUploadUrl);
+        }
         return { success: true, message: "Surat masuk berhasil diperbarui." };
       }
     }
@@ -372,9 +378,11 @@ function addSuratKeluar(params) {
 
     var linkLampiran = params.linkLampiran || "";
     
+    var fileUploadUrl = "";
+    
     // Cek apakah ada upload file base64
     if (params.fileBase64 && params.fileName) {
-      linkLampiran = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
+      fileUploadUrl = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
     }
 
     var newRow = [
@@ -388,6 +396,7 @@ function addSuratKeluar(params) {
       params.status          || "Draft",
       params.keterangan      || "",
       linkLampiran,
+      fileUploadUrl,
       params.dibuatOleh      || "",
       now
     ];
@@ -406,8 +415,9 @@ function updateSuratKeluar(params) {
     var data  = sheet.getDataRange().getValues();
 
     var linkLampiran = params.linkLampiran;
+    var fileUploadUrl = undefined;
     if (params.fileBase64 && params.fileName) {
-      linkLampiran = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
+      fileUploadUrl = uploadFileToDrive(params.fileBase64, params.fileName, params.fileMimeType);
     }
 
     for (var i = 1; i < data.length; i++) {
@@ -422,6 +432,9 @@ function updateSuratKeluar(params) {
         sheet.getRange(rowNum, 8).setValue(params.status        || data[i][7]);
         sheet.getRange(rowNum, 9).setValue(params.keterangan    || data[i][8]);
         sheet.getRange(rowNum, 10).setValue(linkLampiran !== undefined ? linkLampiran : data[i][9]);
+        if (fileUploadUrl !== undefined) {
+          sheet.getRange(rowNum, 11).setValue(fileUploadUrl);
+        }
         return { success: true, message: "Surat keluar berhasil diperbarui." };
       }
     }
@@ -677,7 +690,7 @@ function initializeSpreadsheet() {
   var headersMasuk = [
     "ID", "Nomor Surat", "Tanggal Surat", "Tanggal Terima",
     "Pengirim", "Perihal", "Kategori", "Ditujukan Kepada",
-    "Status", "Keterangan", "Link Lampiran", "Dibuat Oleh", "Tanggal Input"
+    "Status", "Keterangan", "Link Lampiran", "File Upload", "Dibuat Oleh", "Tanggal Input"
   ];
   sheetMasuk.getRange(1, 1, 1, headersMasuk.length).setValues([headersMasuk]);
 
@@ -689,7 +702,7 @@ function initializeSpreadsheet() {
   var headersKeluar = [
     "ID", "Nomor Surat", "Tanggal Surat", "Tujuan",
     "Perihal", "Kategori", "Penandatangan", "Status",
-    "Keterangan", "Link Lampiran", "Dibuat Oleh", "Tanggal Input"
+    "Keterangan", "Link Lampiran", "File Upload", "Dibuat Oleh", "Tanggal Input"
   ];
   sheetKeluar.getRange(1, 1, 1, headersKeluar.length).setValues([headersKeluar]);
 

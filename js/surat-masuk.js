@@ -260,9 +260,16 @@ function openDetailModal(id) {
 
     var elLampiran = document.getElementById("detail-lampiran");
     if (item["Link Lampiran"]) {
-        elLampiran.innerHTML = '<a href="' + item["Link Lampiran"] + '" target="_blank" class="btn btn-sm btn-outline-primary">Buka Lampiran</a>';
+        elLampiran.innerHTML = '<a href="' + item["Link Lampiran"] + '" target="_blank" class="btn btn-sm btn-outline-primary">Buka Link Lampiran</a>';
     } else {
-        elLampiran.textContent = "Tidak ada lampiran";
+        elLampiran.textContent = "Tidak ada link lampiran";
+    }
+
+    var elFileUpload = document.getElementById("detail-file-upload");
+    if (item["File Upload"]) {
+        elFileUpload.innerHTML = '<a href="' + item["File Upload"] + '" target="_blank" class="btn btn-sm btn-outline-primary">Buka File Upload</a>';
+    } else {
+        elFileUpload.textContent = "Tidak ada file upload";
     }
 
     openModal("modal-detail");
