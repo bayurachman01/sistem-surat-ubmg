@@ -259,14 +259,14 @@ function openDetailModal(id) {
     elStatus.innerHTML = getBadgeHtml(item["Status"]);
 
     var elLampiran = document.getElementById("detail-lampiran");
-    if (item["Link Lampiran"]) {
+    if (item["Link Lampiran"] && item["Link Lampiran"].toString().startsWith("http")) {
         elLampiran.innerHTML = '<a href="' + item["Link Lampiran"] + '" target="_blank" class="btn btn-sm btn-outline-primary">Buka Link Lampiran</a>';
     } else {
         elLampiran.textContent = "Tidak ada link lampiran";
     }
 
     var elFileUpload = document.getElementById("detail-file-upload");
-    if (item["File Upload"]) {
+    if (item["File Upload"] && item["File Upload"].toString().startsWith("http")) {
         elFileUpload.innerHTML = '<a href="' + item["File Upload"] + '" target="_blank" class="btn btn-sm btn-outline-primary">Buka File Upload</a>';
     } else {
         elFileUpload.textContent = "Tidak ada file upload";
