@@ -766,7 +766,13 @@ function initializeSpreadsheet() {
 }
 
 function testDrivePermission() {
-  // Fungsi ini HANYA untuk memancing Google meminta izin (permission) akses Google Drive.
-  DriveApp.getRootFolder();
-  Logger.log("Akses Drive Berhasil Diberikan!");
+  try {
+    var folderName = "TEST_UBMG_PERMISSION_TEMP";
+    var root = DriveApp.getRootFolder();
+    var tempFolder = root.createFolder(folderName);
+    tempFolder.setTrashed(true); // langsung hapus
+    return "Izin Google Drive penuh berhasil diberikan!";
+  } catch (e) {
+    return "Error: " + e.message;
+  }
 }
